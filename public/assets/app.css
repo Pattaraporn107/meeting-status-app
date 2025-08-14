@@ -1,0 +1,208 @@
+body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:0;padding:0;background:#f6f7fb;color:#222}
+.container{max-width:1100px;margin:24px auto;padding:0 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.card{background:#fff;border:1px solid #e6e6e6;border-radius:10px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.card h2{margin:0 0 8px}
+.card .current{padding:8px 10px;border-radius:8px;background:#f0f5ff;margin:8px 0}
+.table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden}
+.table th,.table td{padding:10px;border-bottom:1px solid #eee}
+.table thead th{background:#fafafa;text-align:left}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#eee;font-size:12px}
+.badge.live{background:#ffe8e8}
+.badge.upcoming{background:#e8f7ff}
+.badge.done{background:#e9ffe8}
+.btn{display:inline-block;padding:8px 12px;border:1px solid #ddd;border-radius:8px;background:#fff;cursor:pointer}
+.btn.primary{background:#2d6cdf;color:#fff;border-color:#2d6cdf}
+
+
+
+/* ===== Theme: โทนเขียว-ทอง  ===== */
+:root{
+  --bg1:#0b2d23; --bg2:#639687;
+  --ink:#172321; --paper:#fff;
+  --muted:#eef5ff;
+  --live:#e02828; --up:#ffb703; --done:#9aa4a9; --idle:#2ea043;
+  --shadow: 0 10px 24px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.08);
+}
+
+/* พื้นหลัง */
+.wb{
+  margin:0;
+  font-family: "Sarabun","Noto Sans Thai",system-ui,-apple-system,Segoe UI,Roboto,Arial,Helvetica,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(1200px 600px at 110% -10%, rgba(255,215,0,.12), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(38, 184, 118, 0.25), transparent 60%),
+    linear-gradient(180deg,var(--bg1),var(--bg2));
+  min-height:100vh;
+}
+
+/* Header */
+.wb-header{
+  display:flex; align-items:center; gap:16px;
+  color:#fff; padding:24px clamp(16px,3vw,40px);
+}
+.wb-logos{display:flex; align-items:center; gap:10px}
+.wb-logo{height:64px; width:auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,.25))}
+.wb-title h1{margin:0 0 4px; font-weight:800; font-size: clamp(20px,2.4vw,36px)}
+.wb-sub{margin:0; opacity:.9}
+
+/* Layout */
+.container{ padding:0 clamp(16px,3vw,40px) 40px; max-width:1400px; margin:0 auto }
+.grid{
+  display:grid; gap:22px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* Card */
+.card{
+  background:var(--paper);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  padding:18px;
+  display:flex; flex-direction:column; gap:12px;
+}
+.card-head{display:flex; align-items:center; gap:10px}
+.room-name{margin:0; font-size:1.25rem; font-weight:800}
+.room-loc{font-weight:600; opacity:.6; margin-left:2px}
+
+.pill{
+  width:14px; height:14px; border-radius:50%;
+  background:#aeb7bb; /* default (idle) จนกว่า JS จะอัปเดต */
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.06);
+}
+
+/* กล่องรายละเอียด */
+.card-body .current{
+  background:var(--muted);
+  border-radius:12px;
+  padding:12px 14px;
+  line-height:1.55;
+  color: black
+}
+
+/* ป้ายสถานะ (เผื่อ JS เติมคลาสพวกนี้) */
+.badge{display:inline-block; padding:3px 10px; border-radius:999px; font-size:.85rem; color:#fff}
+.badge.live{ background:var(--live) }
+.badge.upcoming{ background:var(--up); color:#111 }
+.badge.done{ background:var(--done) }
+.badge.idle{ background:var(--idle) }
+
+/* ลิงก์ส่วนท้าย */
+.card-foot{ margin-top:auto }
+.link{ color:#3b5bfd; font-weight:700; text-decoration:none }
+.link:hover{ text-decoration:underline }
+
+/* เอฟเฟกต์โหลด */
+.skeleton{
+  position:relative; overflow:hidden; color:transparent;
+}
+.skeleton::after{
+  content:""; position:absolute; inset:0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent);
+  transform:translateX(-100%); animation: sh 1.2s infinite;
+}
+@keyframes sh{to{transform:translateX(100%)}}
+
+/* เล็กลงบนจอเล็ก */
+@media (max-width:420px){
+  .wb-header{flex-direction:column; align-items:flex-start}
+  .wb-logo{height:52px}
+}
+
+
+
+/* Hero */
+.wb-hero{
+  padding:28px 0 12px;
+  background: linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.03));
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  margin-bottom: 20px;
+}
+.hero-inner{
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 clamp(16px,3vw,32px);
+  color:#fff;
+}
+.crumb{
+  display:inline-block; color:#dfe9ff; opacity:.9; text-decoration:none;
+  background: rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  padding:6px 10px; border-radius:10px;
+}
+.crumb:hover{ background: rgba(255,255,255,.2) }
+
+.room-title{
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  margin-top:14px;
+}
+.title{
+  margin:0; font-size: clamp(22px,3.2vw,36px); font-weight: 800; letter-spacing:.2px;
+}
+.chip{
+  display:inline-block; padding:6px 10px; border-radius:999px;
+  background: rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.25); color:#fff;
+  font-weight:700;
+}
+.sub{
+  margin:10px 0 0; opacity:.95; font-size: clamp(14px,1.6vw,18px);
+}
+
+/* Layout */
+.container{ max-width:1100px; margin:0 auto; padding: 0 clamp(16px,3vw,32px) 40px }
+
+/* Glass card */
+.glass{
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(6px);
+  border-radius: 18px;
+  padding: 8px;
+  box-shadow: 0 18px 34px rgba(0,0,0,.18), 0 2px 4px rgba(0,0,0,.08);
+}
+
+/* Table */
+.tbl{
+  width:100%; border-collapse:separate; border-spacing:0;
+  overflow:hidden; border-radius:14px; background:#fff;
+}
+.tbl thead th{
+  text-align:left; font-weight:800; padding:14px 16px; color:#0f1f1a;
+  background: linear-gradient(180deg,#f7fafc,#eef3f7);
+  border-bottom:1px solid #e8edf2;
+}
+.tbl tbody td{
+  padding:16px; border-bottom:1px solid #eef2f5; vertical-align: middle;
+}
+.tbl tbody tr:last-child td{ border-bottom:none }
+.tbl tbody tr:hover td{ background:#f8fbff }
+
+/* fixed widths (ช่วยให้คอลัมน์นิ่ง) */
+.w-160{ width:160px }
+.w-200{ width:200px }
+.w-220{ width:220px }
+
+/* Badges (รองรับค่า live/upcoming/done ที่ JS ใส่) */
+.badge{ display:inline-block; padding:4px 10px; border-radius:999px; font-weight:700; color:#fff; font-size:.9rem }
+.badge.live{ background:#e02828 }
+.badge.upcoming{ background:#ffb703; color:#1a1a1a }
+.badge.done{ background:#9aa4a9 }
+
+/* สถานะย่อยข้างๆ (เช่น "กำลังบรรยาย") */
+.state-note{ font-weight:700; color:#124c3b }
+
+/* ให้อ่านง่ายบนมือถือ */
+@media (max-width:680px){
+  .w-160,.w-200,.w-220{ width:auto }
+  .tbl thead{ display:none }
+  .tbl, .tbl tbody, .tbl tr, .tbl td{ display:block; width:100% }
+  .tbl tbody tr{ margin-bottom:10px; border:1px solid #eef2f5; border-radius:12px; overflow:hidden }
+  .tbl tbody td{ border-bottom:1px dashed #eef2f5 }
+  .tbl tbody tr:last-child td:last-child{ border-bottom:none }
+  .tbl tbody td::before{
+    content: attr(data-label);
+    display:block; font-weight:800; color:#667;
+    margin-bottom:6px;
+  }
+}
+
