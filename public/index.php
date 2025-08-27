@@ -11,6 +11,8 @@ function h($s)
 <html lang="th">
 
 <head>
+  <link rel="icon" type="image/png" href="assets/picture/MOPH202503.png">
+
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>สถานะห้องประชุม</title>
