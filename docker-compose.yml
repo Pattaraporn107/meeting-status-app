@@ -4,7 +4,7 @@ services:
     image: nginx:1.25
     container_name: meeting_nginx
     ports:
-      - "8080:80"                # เว็บหลัก
+      - "8080:80"               
     volumes:
       - ./public:/var/www/html/public
       - ./admin:/var/www/html/admin
@@ -35,7 +35,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       TZ: Asia/Bangkok
     ports:
-      - "3307:3306"              # เผื่ออยากต่อจากเครื่อง
+      - "3307:3306"             
     volumes:
      - dbdata:/var/lib/mysql
      - ./sql/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql:ro
@@ -52,7 +52,7 @@ services:
     ports:
       - "3000:3000"
     networks: [mnet]
-           # ให้อยู่เน็ตเดียวกับ MySQL → เชื่อมด้วย host "db"
+           
 
 networks:
   mnet:

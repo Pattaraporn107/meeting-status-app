@@ -24,7 +24,7 @@ if (!$room) { http_response_code(404); echo "ไม่พบห้อง"; exit;
     <h2>ตารางกำหนดการวันนี้</h2>
     <table id="session-table" class="table">
       <thead>
-        <tr><th>เวลา</th><th>หัวข้อ</th><th>วิทยากร</th><th>สถานะ</th></tr>
+        <tr><th>เวลา</th><th>หัวข้อ</th><th>ผู้นำเสนอ</th><th>สถานะ</th></tr>
       </thead>
       <tbody></tbody>
     </table>

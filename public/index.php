@@ -16,10 +16,13 @@ function h($s)
   <title>สถานะห้องประชุม</title>
   <link rel="stylesheet" href="/public/assets/app.css">
 </head>
+<!-- ปุ่ม backToTop -->
+<button id="backToTop" 
+  class="fixed bottom-6 right-6 bg-green-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-green-700 transition duration-300 hidden">
+  ↑ Top
+</button>
 
 <body class="wb">
-
-  <!-- Header -->
   <header class="wb-header">
     <!-- โลโก้ -->
     <div class="wb-logos flex items-center gap-4 mb-4">
@@ -27,16 +30,17 @@ function h($s)
       <img src="/public/assets/picture/MOPH202503.png" alt="โลโก้ 2" class="wb-logo h-20 w-auto" onerror="this.style.display='none'">
     </div>
 
-    <!-- แบนเนอร์
+    <!--ค่อยลองทำแบนเนอร์
   <img src="/public/assets/picture/B.png" 
      alt="แบนเนอร์ประชุม" 
      class="w-full max-h-[400px] object-cover rounded-lg shadow-md"> -->
 
+
+     
     <!-- ชื่อหัวข้อ -->
     <div class="wb-title text-center">
       <h1 class="text-3xl font-bold">งานประชุมวิชาการกระทรวงสาธารณสุข ประจำปี 2568</h1>
-      <p class="wb-sub">ยกระดับการสาธารณสุขไทย
-        สุขภาพแข็งแรงทุกวัย เศรษฐกิจสุขภาพไทยมั่นคง </p>
+      <p class="wb-sub">ยกระดับการสาธารณสุขไทยสุขภาพแข็งแรงทุกวัย เศรษฐกิจสุขภาพไทยมั่นคง </p>
     </div>
   </header>
 
@@ -93,6 +97,23 @@ function h($s)
   <script>
     window.MeetingApp.initPublic();
   </script>
+  <script>
+  // แสดงปุ่มเมื่อเลื่อนลง
+  window.addEventListener("scroll", function () {
+    const btn = document.getElementById("backToTop");
+    if (document.documentElement.scrollTop > 200) {
+      btn.classList.remove("hidden");
+    } else {
+      btn.classList.add("hidden");
+    }
+  });
+
+  // คลิกแล้วเลื่อนกลับขึ้นบน
+  document.getElementById("backToTop").addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+</script>
+
 </body>
 
 </html>

@@ -32,7 +32,7 @@ window.MeetingApp = (function () {
         el.innerHTML = `
         
             <div><strong>${r.topic}</strong></div>
-            <div>วิทยากร: ${r.speaker || "-"}</div>
+            <div>ผู้นำเสนอ: ${r.speaker || "-"}</div>
             <div>เวลา: ${fmtTime(r.start_time)} - ${fmtTime(r.end_time)}</div>
             <div>${statusBadge(r.status)} ${
           r.is_current ? "กำลังบรรยาย" : ""

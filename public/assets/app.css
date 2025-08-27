@@ -16,7 +16,7 @@ body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:0;padding:0;backgrou
 
 
 
-/* ===== Theme: โทนเขียว-ทอง  ===== */
+
 :root{
   --bg1:#0b2d23; --bg2:#639687;
   --ink:#172321; --paper:#fff;
@@ -25,7 +25,7 @@ body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:0;padding:0;backgrou
   --shadow: 0 10px 24px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.08);
 }
 
-/* พื้นหลัง */
+
 .wb{
   margin:0;
   font-family: "Sarabun","Noto Sans Thai",system-ui,-apple-system,Segoe UI,Roboto,Arial,Helvetica,sans-serif;
@@ -37,7 +37,7 @@ body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:0;padding:0;backgrou
   min-height:100vh;
 }
 
-/* Header */
+
 .wb-header{
   display:flex; align-items:center; gap:16px;
   color:#fff; padding:24px clamp(16px,3vw,40px);
@@ -47,14 +47,13 @@ body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:0;padding:0;backgrou
 .wb-title h1{margin:0 0 4px; font-weight:800; font-size: clamp(20px,2.4vw,36px)}
 .wb-sub{margin:0; opacity:.9}
 
-/* Layout */
 .container{ padding:0 clamp(16px,3vw,40px) 40px; max-width:1400px; margin:0 auto }
 .grid{
   display:grid; gap:22px;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
-/* Card */
+
 .card{
   background:var(--paper);
   border-radius:18px;
@@ -68,11 +67,11 @@ body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:0;padding:0;backgrou
 
 .pill{
   width:14px; height:14px; border-radius:50%;
-  background:#aeb7bb; /* default (idle) จนกว่า JS จะอัปเดต */
+  background:#aeb7bb; 
   box-shadow: inset 0 0 0 2px rgba(0,0,0,.06);
 }
 
-/* กล่องรายละเอียด */
+
 .card-body .current{
   background:var(--muted);
   border-radius:12px;
@@ -81,19 +80,18 @@ body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:0;padding:0;backgrou
   color: black
 }
 
-/* ป้ายสถานะ (เผื่อ JS เติมคลาสพวกนี้) */
+
 .badge{display:inline-block; padding:3px 10px; border-radius:999px; font-size:.85rem; color:#fff}
 .badge.live{ background:var(--live) }
 .badge.upcoming{ background:var(--up); color:#111 }
 .badge.done{ background:var(--done) }
 .badge.idle{ background:var(--idle) }
 
-/* ลิงก์ส่วนท้าย */
+
 .card-foot{ margin-top:auto }
 .link{ color:#3b5bfd; font-weight:700; text-decoration:none }
 .link:hover{ text-decoration:underline }
 
-/* เอฟเฟกต์โหลด */
 .skeleton{
   position:relative; overflow:hidden; color:transparent;
 }
@@ -104,12 +102,26 @@ body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:0;padding:0;backgrou
 }
 @keyframes sh{to{transform:translateX(100%)}}
 
-/* เล็กลงบนจอเล็ก */
+
 @media (max-width:420px){
   .wb-header{flex-direction:column; align-items:flex-start}
   .wb-logo{height:52px}
 }
 
+
+.toolbar{
+  display:flex; align-items:center; gap:8px;
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(6px);
+  padding:8px 12px; border-radius:10px; margin-bottom:10px; color:#fff;
+}
+.toolbar select{
+  padding:6px 10px; border-radius:8px; border:1px solid #d6d6d6;
+  background:#fff; color:#111;
+}
+
+
+.card.hide{ display:none !important; }
 
 
 /* Hero */
@@ -149,10 +161,10 @@ body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:0;padding:0;backgrou
   margin:10px 0 0; opacity:.95; font-size: clamp(14px,1.6vw,18px);
 }
 
-/* Layout */
+
 .container{ max-width:1100px; margin:0 auto; padding: 0 clamp(16px,3vw,32px) 40px }
 
-/* Glass card */
+
 .glass{
   background: rgba(255,255,255,.92);
   backdrop-filter: blur(6px);
@@ -161,7 +173,7 @@ body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:0;padding:0;backgrou
   box-shadow: 0 18px 34px rgba(0,0,0,.18), 0 2px 4px rgba(0,0,0,.08);
 }
 
-/* Table */
+
 .tbl{
   width:100%; border-collapse:separate; border-spacing:0;
   overflow:hidden; border-radius:14px; background:#fff;
@@ -177,21 +189,20 @@ body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:0;padding:0;backgrou
 .tbl tbody tr:last-child td{ border-bottom:none }
 .tbl tbody tr:hover td{ background:#f8fbff }
 
-/* fixed widths (ช่วยให้คอลัมน์นิ่ง) */
+
 .w-160{ width:160px }
 .w-200{ width:200px }
 .w-220{ width:220px }
 
-/* Badges (รองรับค่า live/upcoming/done ที่ JS ใส่) */
+
 .badge{ display:inline-block; padding:4px 10px; border-radius:999px; font-weight:700; color:#fff; font-size:.9rem }
 .badge.live{ background:#e02828 }
 .badge.upcoming{ background:#ffb703; color:#1a1a1a }
 .badge.done{ background:#9aa4a9 }
 
-/* สถานะย่อยข้างๆ (เช่น "กำลังบรรยาย") */
+
 .state-note{ font-weight:700; color:#124c3b }
 
-/* ให้อ่านง่ายบนมือถือ */
 @media (max-width:680px){
   .w-160,.w-200,.w-220{ width:auto }
   .tbl thead{ display:none }
