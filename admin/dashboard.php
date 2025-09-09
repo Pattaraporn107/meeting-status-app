@@ -1,10 +1,12 @@
-<?php
+<?php 
 /**
- * Admin Dashboard — Polished UI (Keep same endpoints/IDs/logic)
- * - Visual-only redesign: premium, clean, calm, accessible
- * - Sticky table header, zebra rows, refined buttons/badges
- * - Modal with glass effect, backdrop blur
- * - No change to data flow / selectors / APIs
+ * Admin Dashboard — Unified Status (live/upcoming/done) + Now/Next strip
+ * - Keep original endpoints/IDs/logic (no breaking changes)
+ * - Status is computed consistently with public pages:
+ *   live: is_current=1 OR NOW() between start_time..end_time
+ *   upcoming: start_time > NOW()
+ *   done: end_time < NOW()
+ * - Adds a Now/Next strip for the selected room (uses /public/api/status.php)
  */
 
 declare(strict_types=1);
@@ -63,18 +65,27 @@ header(
 
   <!-- Micro theming -->
   <style nonce="<?= $cspNonce ?>">
-    /* Smooth font rendering */
     html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-    /* Subtle custom scrollbars */
     ::-webkit-scrollbar{ height:12px; width:12px; }
     ::-webkit-scrollbar-thumb{ background: rgba(15,23,42,.15); border-radius: 9999px; border:3px solid transparent; background-clip: content-box; }
     ::-webkit-scrollbar-thumb:hover{ background: rgba(15,23,42,.28); background-clip: content-box; }
-    /* Sticky header shadow helper */
     .sticky-shadow { box-shadow: 0 1px 0 0 rgba(15,23,42,.06); }
-    /* Gentle card shadow */
     .elevate { box-shadow: 0 10px 30px -12px rgba(2,6,23,.15); }
-    /* Glass effect */
     .glass { background: rgba(255,255,255,.72); backdrop-filter: blur(10px); }
+
+    /* Now/Next strip */
+    .nn{display:flex;gap:.625rem;align-items:center}
+    .nn-badge{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:800}
+    .nn-live{background:#fee2e2;color:#b91c1c}
+    .nn-next{background:#e5f0ff;color:#1e40af}
+    .nn-sep{width:1px;height:18px;background:#E6EBF0}
+    .nn-clip{position:relative;max-width:100%;overflow:hidden;white-space:nowrap}
+    .nn-title{display:inline-block;white-space:nowrap;font-weight:800;color:#0f172a}
+    .nn-title.next{color:#6b7280}
+
+    @keyframes nn-marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-100%)} }
+    .nn-marquee { animation: nn-marquee 14s linear infinite; will-change: transform }
+    @media (prefers-reduced-motion:reduce){ .nn-marquee{ animation:none !important; transform:none !important } }
   </style>
 </head>
 
@@ -86,7 +97,6 @@ header(
       <div class="glass elevate rounded-2xl px-5 py-4 flex items-center justify-between border border-slate-200/60">
         <div class="flex items-center gap-4">
           <div class="w-10 h-10 rounded-xl bg-emerald-600/90 text-white grid place-items-center shadow">
-            <!-- simple logo -->
             <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8">
               <path d="M12 3l8 4.5v9L12 21 4 16.5v-9L12 3Z"></path>
               <path d="M12 8v13"></path>
@@ -140,6 +150,17 @@ header(
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 10-3.9 7.5"></path><path d="M21 12h-6"></path></svg>
               <span class="font-medium">รีเฟรช</span>
             </button>
+          </div>
+        </div>
+
+        <!-- Now/Next strip -->
+        <div id="nnWrap" class="mt-4 hidden">
+          <div class="nn">
+            <span class="nn-badge nn-live">LIVE</span>
+            <div class="nn-clip"><span id="nnLive" class="nn-title">—</span></div>
+            <span class="nn-sep" aria-hidden="true"></span>
+            <span class="nn-badge nn-next">UPCOMING</span>
+            <div class="nn-clip"><span id="nnNext" class="nn-title next">—</span></div>
           </div>
         </div>
       </div>
@@ -287,7 +308,7 @@ header(
     </div>
   </div>
 
-  <!-- Original JS (kept intact) -->
+  <!-- JS -->
   <script nonce="<?= $cspNonce ?>">
     const $  = (q, d=document) => d.querySelector(q);
     const $$ = (q, d=document) => Array.from(d.querySelectorAll(q));
@@ -309,6 +330,62 @@ header(
         .replaceAll('"','&quot;').replaceAll("'",'&#039;');
     }
 
+    // ===== Status helpers (same rule as public pages)
+    const pad = n => String(n).padStart(2,'0');
+    const parseDT = s => new Date((s||'').replace(' ','T'));
+    function computeStatus(item){
+      if (String(item.is_current) === '1') return 'live';
+      const now = new Date(), st = parseDT(item.start_time), en = parseDT(item.end_time);
+      if (!isNaN(st) && !isNaN(en)) {
+        if (st <= now && en >= now) return 'live';
+        if (en < now) return 'done';
+        if (st > now) return 'upcoming';
+      }
+      return 'upcoming';
+    }
+    function statusBadgeClass(st){
+      if (st==='live') return 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200';
+      if (st==='done') return 'bg-slate-100 text-slate-700 ring-1 ring-slate-300';
+      return 'bg-amber-50 text-amber-700 ring-1 ring-amber-200';
+    }
+
+    // ===== Now/Next strip helpers
+    function hhmm2(s){ const d=parseDT(s); if(isNaN(d))return'--:--'; return pad(d.getHours())+':'+pad(d.getMinutes()); }
+    function applyMarqueeEl(el){
+      if(!el) return;
+      el.classList.remove('nn-marquee');
+      const clip = el.parentElement;
+      if(clip && el.scrollWidth > clip.clientWidth + 2) el.classList.add('nn-marquee');
+    }
+    async function loadNowNext(roomId){
+      try{
+        const res = await jfetch('/public/api/status.php');
+        const room = (res.rooms||[]).find(r => String(r.room_id) === String(roomId));
+        const wrap = $('#nnWrap'), liveEl = $('#nnLive'), nextEl = $('#nnNext');
+        if(!wrap || !liveEl || !nextEl){ return; }
+
+        let hasAny = false;
+        if(room?.current){
+          hasAny = true;
+          liveEl.textContent = `${room.current.topic||'—'} | ${hhmm2(room.current.start_time)}-${hhmm2(room.current.end_time)}`;
+          applyMarqueeEl(liveEl);
+        }else{
+          liveEl.textContent = '—';
+        }
+        if(room?.next){
+          hasAny = true;
+          nextEl.textContent = `${room.next.topic||'—'} | ${hhmm2(room.next.start_time)}-${hhmm2(room.next.end_time)}`;
+          nextEl.classList.add('next');
+          applyMarqueeEl(nextEl); // marquee สีเทา
+        }else{
+          nextEl.textContent = '—';
+        }
+        wrap.classList.toggle('hidden', !hasAny);
+      }catch(_e){
+        // เงียบไว้ ไม่ให้รบกวนงานหลัก
+      }
+    }
+
     function showLoading(show){ $('#table-loading').classList.toggle('hidden', !show); }
     function showEmpty(show){ $('#table-empty').classList.toggle('hidden', !show); }
 
@@ -321,27 +398,24 @@ header(
 
       try {
         const data = await jfetch(`/public/api/room_sessions.php?room_id=${encodeURIComponent(roomId)}`);
-        const list = data.sessions || [];
+        const list = (data.sessions || []).slice().sort((a,b)=>parseDT(a.start_time)-parseDT(b.start_time));
+
         showLoading(false);
-        if(list.length === 0){ showEmpty(true); return; }
+        if(list.length === 0){ showEmpty(true); await loadNowNext(roomId); return; }
 
         list.forEach(s=>{
+          const st = computeStatus(s);
           const tr = document.createElement('tr');
           tr.className = "align-top border-b last:border-b-0 border-slate-200 hover:bg-emerald-50/40 transition-colors";
           tr.innerHTML = `
-            <td class="py-2.5 px-3 whitespace-nowrap text-slate-700">${h(s.start_time).replace('T',' ').slice(0,16)}</td>
-            <td class="py-2.5 px-3 whitespace-nowrap text-slate-700">${h(s.end_time).replace('T',' ').slice(0,16)}</td>
+            <td class="py-2.5 px-3 whitespace-nowrap text-slate-700">${h((s.start_time||'').replace('T',' ').slice(0,16))}</td>
+            <td class="py-2.5 px-3 whitespace-nowrap text-slate-700">${h((s.end_time||'').replace('T',' ').slice(0,16))}</td>
             <td class="py-2.5 px-3 min-w-[240px] font-medium text-slate-800">${h(s.topic)}</td>
             <td class="py-2.5 px-3 text-slate-700">${h(s.speaker||'-')}</td>
             <td class="py-2.5 px-3">
-              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
-                ${ s.status==='live' ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200' :
-                   s.status==='done' ? 'bg-slate-100 text-slate-700 ring-1 ring-slate-300' :
-                                       'bg-amber-50 text-amber-700 ring-1 ring-amber-200' }">
-                ${h(s.status)}
-              </span>
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusBadgeClass(st)}">${h(st)}</span>
             </td>
-            <td class="py-2.5 px-3">${s.is_current ? '<span class="inline-flex items-center text-emerald-600">✔</span>' : ''}</td>
+            <td class="py-2.5 px-3">${String(s.is_current)==='1' || st==='live' ? '<span class="inline-flex items-center text-emerald-600">✔</span>' : ''}</td>
             <td class="py-2.5 px-3">
               <div class="flex flex-wrap gap-1.5">
                 <button class="rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500" data-action="edit" data-id="${s.id}">แก้ไข</button>
@@ -351,6 +425,10 @@ header(
             </td>`;
           tbody.appendChild(tr);
         });
+
+        // อัปเดต Now/Next จาก API กลาง (ให้ตรงกับหน้า public)
+        await loadNowNext(roomId);
+
       } catch(e){
         showLoading(false);
         Swal.fire({ icon:'error', title:'โหลดข้อมูลไม่สำเร็จ', text:'โปรดลองอีกครั้ง' });
@@ -393,11 +471,11 @@ header(
           const row = btn.closest('tr');
           const d = {
             id: id,
-            start_time: row.children[0].textContent.trim().replace(' ','T')+':00',
-            end_time: row.children[1].textContent.trim().replace(' ','T')+':00',
-            topic: row.children[2].textContent.trim(),
-            speaker: row.children[3].textContent.trim().replace(/^-$|^\s*$/,'')||'',
-            status: row.children[4].textContent.trim()
+            start_time: (row.children[0].textContent.trim() || '').replace(' ','T')+':00',
+            end_time:   (row.children[1].textContent.trim() || '').replace(' ','T')+':00',
+            topic:      row.children[2].textContent.trim(),
+            speaker:    row.children[3].textContent.trim().replace(/^-$|^\s*$/,'')||'',
+            status:     row.children[4].textContent.trim()
           };
           openEditModal(d);
         } else if(action==='current'){
@@ -414,8 +492,8 @@ header(
       f.topic.value = d.topic || '';
       f.speaker.value = d.speaker || '';
       f.start_time.value = toLocal(d.start_time);
-      f.end_time.value = toLocal(d.end_time);
-      f.status.value = d.status || 'upcoming';
+      f.end_time.value   = toLocal(d.end_time);
+      f.status.value     = d.status || 'upcoming';
       $('#editModal').classList.remove('hidden');
       setTimeout(()=>f.topic?.focus(), 0);
     }
@@ -460,6 +538,9 @@ header(
     $('#room-select').addEventListener('change', loadSessions);
     initForms();
     loadSessions();
+
+    // auto refresh every 20s (ไม่บังคับ)
+    setInterval(loadSessions, 20000);
   </script>
 </body>
 </html>
